@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Remove EXIF metadata from photos — 100% in your browser, nothing uploaded" />
+  <title>EXIF Stripper — Remove Photo Metadata</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__brand">
+        <div class="header__logo">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="6" width="22" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="14" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M10 6l2-3h4l2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 4l3 3M25 4l-3 3" stroke="#6366f1" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header__title">EXIF Stripper</h1>
+          <p class="header__tagline" data-i18n="app.tagline">Remove EXIF metadata from photos — 100% in your browser</p>
+        </div>
+      </div>
+      <div class="header__actions">
+        <span class="badge badge--privacy" data-i18n="privacy.badge" tabindex="0" data-i18n-attr="title: privacy.tooltip">Client-side only</span>
+        <div id="lang-selector"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Dropzone -->
+    <section id="dropzone-section" class="dropzone-section">
+      <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Drop photos">
+        <svg class="dropzone__icon" width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <rect x="8" y="16" width="48" height="36" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="24" cy="30" r="5" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M12 48l12-12 8 8 8-6 12 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M32 4v8M28 8l4-4 4 4" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p class="dropzone__title" data-i18n="dropzone.title">Drop photos here</p>
+        <p class="dropzone__subtitle" data-i18n="dropzone.subtitle">or click to browse</p>
+        <p class="dropzone__accept" data-i18n="dropzone.accept">JPEG, PNG, WebP, HEIC supported</p>
+      </div>
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/heic" multiple hidden />
+    </section>
+
+    <!-- Workspace -->
+    <section id="workspace" class="workspace" hidden>
+      <!-- Workspace header -->
+      <div class="workspace__header">
+        <div class="workspace__info">
+          <span id="file-count" class="workspace__filename"></span>
+        </div>
+        <div class="workspace__actions">
+          <button id="btn-add-more" class="btn btn--secondary btn-sm">
+            <span data-i18n="btn.addMore">Add More Photos</span>
+          </button>
+          <button id="btn-reset" class="btn btn--ghost btn-sm" data-i18n="btn.reset">Reset</button>
+        </div>
+      </div>
+
+      <!-- Two-column layout -->
+      <div class="workspace__body">
+        <!-- Left: Image list -->
+        <div class="pages-section">
+          <div class="pages-header">
+            <h2 class="pages-title" data-i18n="workspace.originalMetadata">Original Metadata</h2>
+          </div>
+          <div id="images-grid" class="pages-grid" role="list" aria-label="Uploaded images"></div>
+        </div>
+
+        <!-- Right: Controls -->
+        <aside class="controls-section">
+          <h2 class="controls-title" data-i18n="output.format">Output Format</h2>
+
+          <div class="control-group">
+            <label for="output-format-select" class="control-label" data-i18n="output.format">Output Format</label>
+            <select id="output-format-select" class="control-input">
+              <option value="keep" data-i18n="output.keepFormat">Keep Original</option>
+              <option value="jpeg" data-i18n="output.convertTo">Convert to JPEG</option>
+              <option value="webp" data-i18n="output.convertToWebP">Convert to WebP</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="quality-select" class="control-label" data-i18n="output.quality">Quality</label>
+            <select id="quality-select" class="control-input">
+              <option value="high">High (95%)</option>
+              <option value="medium" selected>Medium (85%)</option>
+              <option value="low">Low (70%)</option>
+            </select>
+          </div>
+
+          <!-- Progress bar -->
+          <div id="progress-container" class="progress-container" hidden>
+            <div class="progress-bar">
+              <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <div class="progress-meta">
+              <span id="progress-text" class="progress-text"></span>
+              <span id="progress-percent" class="progress-percent">0%</span>
+            </div>
+          </div>
+
+          <!-- Result info -->
+          <div id="result-info" class="result-info" hidden>
+            <span class="result-icon">✓</span>
+            <span class="result-label" data-i18n="result.label">Your cleaned image is ready</span>
+            <span id="result-details" class="result-details"></span>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="actions">
+            <button id="btn-strip" class="btn btn--primary" data-i18n="btn.strip">Strip EXIF Data</button>
+            <button id="btn-download" class="btn btn--primary" data-i18n="btn.download" hidden>Download Clean Image</button>
+            <button id="btn-download-all" class="btn btn--secondary" hidden>Download All</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <span class="footer__privacy" data-i18n="footer.privacy">Your photos never leave your browser</span>
+      <a href="https://github.com/Hichiro6/exif-stripper" class="footer__link" data-i18n="footer.openSource">Open Source</a>
+    </div>
+  </footer>
+
+  <!-- SR Live region -->
+  <div id="sr-live" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
