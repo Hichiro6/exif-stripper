@@ -1,0 +1,21 @@
+{
+  "name": "EXIF Stripper",
+  "short_name": "EXIF Stripper",
+  "description": "Remove EXIF metadata from photos in your browser. Protect your privacy \u2014 strip GPS, camera info, and more. 100% local.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#08090a",
+  "theme_color": "#08090a",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
+  "lang": "en-US"
+}
