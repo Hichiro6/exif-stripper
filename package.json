@@ -1,7 +1,7 @@
 {
   "name": "exif-stripper",
-  "version": "1.0.0",
-  "description": "Security watermark for administrative documents — 100% client-side",
+  "version": "0.1.0",
+  "description": "Security watermark for administrative documents \u2014 100% client-side",
   "type": "module",
   "license": "CC-BY-NC-ND-4.0",
   "scripts": {
