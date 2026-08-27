@@ -195,12 +195,15 @@ function createImageCard(imageData, index) {
 
 function toggleButtons() {
   if (uploadedFiles.length > 1) {
+    stripBtn.hidden = false;
     stripBtn.textContent = t('btn.strip');
     downloadBtn.hidden = true;
-    downloadAllBtn.hidden = false;
+    downloadAllBtn.hidden = true;
   } else {
-    stripBtn.hidden = true;
-    downloadBtn.hidden = false;
+    // Single image: show strip button, hide download until cleaned
+    stripBtn.hidden = false;
+    stripBtn.textContent = t('btn.strip');
+    downloadBtn.hidden = true;
     downloadAllBtn.hidden = true;
   }
 }
@@ -261,8 +264,15 @@ async function stripExifBatch() {
       resultDetails.textContent = `${uploadedFiles.length} ${t('result.pages')} • Saved: ${formatBytes(totalSaved)}`;
     }
 
+    // Show appropriate download button after processing
     stripBtn.hidden = true;
-    downloadAllBtn.hidden = false;
+    if (uploadedFiles.length === 1) {
+      downloadBtn.hidden = false;
+      downloadAllBtn.hidden = true;
+    } else {
+      downloadBtn.hidden = true;
+      downloadAllBtn.hidden = false;
+    }
     announce(t('progress.completed'));
   } catch (err) {
     console.error('Exif stripping failed:', err);
@@ -420,6 +430,9 @@ function resetAll() {
   downloadBtn.hidden = true;
   downloadAllBtn.hidden = true;
   stripBtn.hidden = false;
+  fileCountEl.textContent = '';
+  outputFormatSelect.value = 'keep';
+  qualitySelect.value = 'medium';
   fileInput.value = '';
   announce('Reset complete');
 }
