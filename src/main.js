@@ -118,22 +118,49 @@ async function handleFiles(files) {
 
 // === Load Image ===
 async function loadImage(file) {
+  // Use createImageBitmap with from-image to respect EXIF orientation
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  } catch {
+    // Fallback for browsers without createImageBitmap or imageOrientation support
+    bitmap = await loadFallbackBitmap(file);
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  const dimensions = `${bitmap.width}x${bitmap.height}`;
+
+  return {
+    id: crypto.randomUUID(),
+    file,
+    src: objectUrl,
+    width: bitmap.width,
+    height: bitmap.height,
+    dimensions,
+    size: formatBytes(file.size),
+    rawSize: file.size,
+    originalType: file.type,
+    _bitmap: bitmap,
+  };
+}
+
+function loadFallbackBitmap(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = async (e) => {
+    reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
-        const dimensions = `${img.width}x${img.height}`;
-        const size = formatBytes(file.size);
-        resolve({
-          id: crypto.randomUUID(),
-          file,
-          src: e.target.result,
-          width: img.width,
-          height: img.height,
-          dimensions,
-          size,
-          originalType: file.type,
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            createImageBitmap(blob).then(resolve).catch(reject);
+          } else {
+            resolve({ width: img.width, height: img.height, _img: img, _src: e.target.result });
+          }
         });
       };
       img.onerror = () => reject(new Error(t('error.failedLoad')));
@@ -245,7 +272,7 @@ async function stripExifBatch() {
       cleanedImages.push(cleaned);
 
       // Show before/after size comparison
-      const savings = calculateSavings(imageData.size, cleaned.blob.size);
+      const savings = calculateSavings(imageData.file.size, cleaned.blob.size);
       imageData.cleaned = cleaned;
       imageData.savings = savings;
     }
@@ -258,7 +285,6 @@ async function stripExifBatch() {
     if (uploadedFiles.length === 1) {
       const imageData = uploadedFiles[0];
       resultDetails.textContent = `${t('result.savings', imageData.savings)}`;
-      resultDetails.setAttribute('data-cleaned-blob', URL.createObjectURL(imageData.cleaned.blob));
     } else {
       const totalSaved = uploadedFiles.reduce((sum, img) => sum + img.savings.bytes, 0);
       resultDetails.textContent = `${uploadedFiles.length} ${t('result.pages')} • Saved: ${formatBytes(totalSaved)}`;
@@ -291,73 +317,95 @@ async function stripExifBatch() {
 
 function cleanImage(imageData, format, quality) {
   return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    // Use the orientation-corrected bitmap directly if available
+    const bitmap = imageData._bitmap;
+    
+    if (bitmap && bitmap.close) {
+      // ImageBitmap path (preferred — EXIF orientation already applied)
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
-    const img = new Image();
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
+      const MAX_MEGAPIXELS = 16.7;
+      const megapixels = (bitmap.width * bitmap.height) / 1e6;
+      let scale = 1;
+      if (megapixels > MAX_MEGAPIXELS) {
+        scale = Math.sqrt(MAX_MEGAPIXELS / megapixels);
+      }
+      canvas.width = Math.round(bitmap.width * scale);
+      canvas.height = Math.round(bitmap.height * scale);
 
-      // Fill white background for transparent images when converting to JPEG
       if (format === 'jpeg') {
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      encodeCanvas(canvas, format, quality, imageData, resolve, reject);
+    } else {
+      // Fallback: Image path for older browsers
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
-      // Determine output MIME type
-      let mimeType = imageData.originalType;
-      if (format === 'jpeg') {
-        mimeType = 'image/jpeg';
-      } else if (format === 'webp') {
-        mimeType = 'image/webp';
-      }
+        const MAX_MEGAPIXELS = 16.7;
+        const megapixels = (img.width * img.height) / 1e6;
+        let scale = 1;
+        if (megapixels > MAX_MEGAPIXELS) {
+          scale = Math.sqrt(MAX_MEGAPIXELS / megapixels);
+        }
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
 
-      // Re-encode without EXIF
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            reject(new Error(t('error.failedClean', { msg: 'Canvas toBlob returned null' })));
-            return;
-          }
-          resolve({ blob });
-        },
-        mimeType,
-        quality,
-      );
-    };
+        if (format === 'jpeg') {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
-    img.onerror = () => {
-      reject(new Error(t('error.failedLoad')));
-    };
-
-    img.src = imageData.src;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        encodeCanvas(canvas, format, quality, imageData, resolve, reject);
+      };
+      img.onerror = () => reject(new Error(t('error.failedLoad')));
+      img.src = imageData.src;
+    }
   });
 }
 
-function calculateSavings(beforeSizeStr, afterBlob) {
-  const before = parseBytes(beforeSizeStr);
-  const after = afterBlob.size;
-  const saved = before - after;
-  const percent = before > 0 ? Math.round((saved / before) * 100) : 0;
+function encodeCanvas(canvas, format, quality, imageData, resolve, reject) {
+  const ctx = canvas.getContext('2d');
+  
+  // Determine output MIME type
+  const supportedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  let mimeType = imageData.originalType;
+  if (format === 'jpeg') {
+    mimeType = 'image/jpeg';
+  } else if (format === 'webp') {
+    mimeType = 'image/webp';
+  } else if (!supportedTypes.includes(mimeType)) {
+    mimeType = 'image/jpeg';
+  }
+
+  canvas.toBlob(
+    (blob) => {
+      if (!blob) {
+        reject(new Error(t('error.failedClean', { msg: 'Canvas toBlob returned null' })));
+        return;
+      }
+      resolve({ blob });
+    },
+    mimeType,
+    quality,
+  );
+}
+
+function calculateSavings(beforeBytes, afterBytes) {
+  const saved = beforeBytes - afterBytes;
+  const percent = beforeBytes > 0 ? Math.round((saved / beforeBytes) * 100) : 0;
 
   return {
     bytes: saved,
     percent,
   };
-}
-
-function parseBytes(sizeStr) {
-  // Parse "1.2 MB" -> 1258291
-  const match = sizeStr.match(/^([\d.]+)\s*(\w+)/);
-  if (!match) return 0;
-  const val = parseFloat(match[1]);
-  const unit = match[2].toUpperCase();
-
-  const units = { KB: 1024, MB: 1024 ** 2, GB: 1024 ** 3 };
-  return Math.round(val * (units[unit] || 1));
 }
 
 // === Downloads ===
@@ -367,24 +415,23 @@ function downloadCleanedImage() {
 
   const imageData = uploadedFiles[0];
   const url = URL.createObjectURL(imageData.cleaned.blob);
-  const filename = generateFilename(imageData.file.name, 'clean');
+  const filename = generateFilename(imageData.file.name, 'clean', imageData.cleaned.blob.type);
   downloadFile(url, filename);
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
   announce(t('btn.downloadStarted'));
 }
 
 async function downloadAllImages() {
-  // Wait for zip support if needed, or download sequentially
   for (const imageData of uploadedFiles) {
     if (imageData.cleaned) {
       const url = URL.createObjectURL(imageData.cleaned.blob);
-      const filename = generateFilename(imageData.file.name, 'clean');
+      const filename = generateFilename(imageData.file.name, 'clean', imageData.cleaned.blob.type);
       downloadFile(url, filename);
-      URL.revokeObjectURL(url);
-      await delay(500); // Stagger downloads
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      await delay(500);
     }
   }
-  announce('All downloads started');
+  announce(t('btn.downloadStarted'));
 }
 
 function downloadFile(url, filename) {
@@ -396,12 +443,19 @@ function downloadFile(url, filename) {
   document.body.removeChild(a);
 }
 
-function generateFilename(originalName, suffix) {
-  const extMatch = originalName.match(/^(.+?)\.(jpg|jpeg|png|webp)$/i);
-  if (extMatch) {
-    return `${extMatch[1]}-${suffix}.${extMatch[2]}`;
+function generateFilename(originalName, suffix, outputMimeType) {
+  const baseName = originalName.replace(/\.[^./\\]+$/, '');
+  let ext = 'jpg';
+  if (outputMimeType) {
+    const extMap = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+    ext = extMap[outputMimeType] || 'jpg';
+  } else {
+    const extMatch = originalName.match(/\.([^.]+)$/);
+    if (extMatch) {
+      ext = extMatch[1].toLowerCase();
+    }
   }
-  return `${originalName}-${suffix}`;
+  return `${baseName}-${suffix}.${ext}`;
 }
 
 // === Utilities ===

@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Remove EXIF metadata from photos — 100% in your browser, nothing uploaded" />
   <title>EXIF Stripper — Remove Photo Metadata</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="stylesheet" href="/styles/main.css" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./styles/main.css" />
 </head>
 <body>
   <!-- Header -->
@@ -39,15 +39,17 @@
     <!-- Dropzone -->
     <section id="dropzone-section" class="dropzone-section">
       <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Drop photos">
-        <svg class="dropzone__icon" width="64" height="64" viewBox="0 0 64 64" fill="none">
-          <rect x="8" y="16" width="48" height="36" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
-          <circle cx="24" cy="30" r="5" fill="none" stroke="currentColor" stroke-width="3"/>
-          <path d="M12 48l12-12 8 8 8-6 12 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M32 4v8M28 8l4-4 4 4" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <p class="dropzone__title" data-i18n="dropzone.title">Drop photos here</p>
-        <p class="dropzone__subtitle" data-i18n="dropzone.subtitle">or click to browse</p>
-        <p class="dropzone__accept" data-i18n="dropzone.accept">JPEG, PNG, WebP, HEIC supported</p>
+        <div class="dropzone__inner">
+          <svg class="dropzone__icon" width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <rect x="8" y="16" width="48" height="36" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+            <circle cx="24" cy="30" r="5" fill="none" stroke="currentColor" stroke-width="3"/>
+            <path d="M12 48l12-12 8 8 8-6 12 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M32 4v8M28 8l4-4 4 4" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p class="dropzone__title" data-i18n="dropzone.title">Drop photos here</p>
+          <p class="dropzone__subtitle" data-i18n="dropzone.subtitle">or click to browse</p>
+          <p class="dropzone__accept" data-i18n="dropzone.accept">JPEG, PNG, WebP, HEIC supported</p>
+        </div>
       </div>
       <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/heic" multiple hidden />
     </section>
@@ -139,6 +141,6 @@
   <!-- SR Live region -->
   <div id="sr-live" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <script type="module" src="/src/main.js"></script>
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>
