@@ -24,7 +24,7 @@ export const TRANSLATIONS = {
 
     'dropzone.title': 'Drop photos here',
     'dropzone.subtitle': 'or click to browse',
-    'dropzone.accept': 'JPEG, PNG, WebP, HEIC supported',
+    'dropzone.accept': 'JPEG, PNG, WebP supported',
 
     'workspace.fileName': '{name}',
     'workspace.fileInfo': '{size} • {dimensions}',
@@ -81,7 +81,7 @@ export const TRANSLATIONS = {
 
     'dropzone.title': 'Déposez vos photos ici',
     'dropzone.subtitle': 'ou cliquez pour parcourir',
-    'dropzone.accept': 'JPEG, PNG, WebP, HEIC pris en charge',
+    'dropzone.accept': 'JPEG, PNG, WebP pris en charge',
 
     'workspace.fileName': '{name}',
     'workspace.fileInfo': '{size} • {dimensions}',
@@ -138,7 +138,7 @@ export const TRANSLATIONS = {
 
     'dropzone.title': 'Bilder hier ablegen',
     'dropzone.subtitle': 'oder klicken zum Durchsuchen',
-    'dropzone.accept': 'JPEG, PNG, WebP, HEIC unterstützt',
+    'dropzone.accept': 'JPEG, PNG, WebP unterstützt',
 
     'workspace.fileName': '{name}',
     'workspace.fileInfo': '{size} • {dimensions}',
@@ -195,7 +195,7 @@ export const TRANSLATIONS = {
 
     'dropzone.title': 'Arrastra fotos aquí',
     'dropzone.subtitle': 'o haz clic para buscar',
-    'dropzone.accept': 'Soporta JPEG, PNG, WebP, HEIC',
+    'dropzone.accept': 'Soporta JPEG, PNG, WebP',
 
     'workspace.fileName': '{name}',
     'workspace.fileInfo': '{size} • {dimensions}',
@@ -252,7 +252,7 @@ export const TRANSLATIONS = {
 
     'dropzone.title': 'Solte fotos aqui',
     'dropzone.subtitle': 'ou clique para navegar',
-    'dropzone.accept': 'JPEG, PNG, WebP, HEIC suportados',
+    'dropzone.accept': 'JPEG, PNG, WebP suportados',
 
     'workspace.fileName': '{name}',
     'workspace.fileInfo': '{size} • {dimensions}',
@@ -309,7 +309,7 @@ export const TRANSLATIONS = {
 
     'dropzone.title': "Sleep foto's hierheen",
     'dropzone.subtitle': 'of klik om te bladeren',
-    'dropzone.accept': 'JPEG, PNG, WebP, HEIC ondersteund',
+    'dropzone.accept': 'JPEG, PNG, WebP ondersteund',
 
     'workspace.fileName': '{name}',
     'workspace.fileInfo': '{size} • {dimensions}',
@@ -366,7 +366,7 @@ export const TRANSLATIONS = {
 
     'dropzone.title': 'Trascina le foto qui',
     'dropzone.subtitle': 'o clicca per sfogliare',
-    'dropzone.accept': 'JPEG, PNG, WebP, HEIC supportati',
+    'dropzone.accept': 'JPEG, PNG, WebP supportati',
 
     'workspace.fileName': '{name}',
     'workspace.fileInfo': '{size} • {dimensions}',

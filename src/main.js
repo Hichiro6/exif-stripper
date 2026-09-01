@@ -42,12 +42,7 @@ function setupEventListeners() {
   dropzone.addEventListener('dragleave', handleDragLeave);
   dropzone.addEventListener('drop', handleDrop);
   dropzone.addEventListener('click', () => fileInput.click());
-  dropzone.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      fileInput.click();
-    }
-  });
+  // Native <button> handles Enter/Space keyboard activation automatically
   fileInput.addEventListener('change', handleFileSelect);
 
   // Add more
@@ -78,23 +73,39 @@ function handleDragLeave(e) {
   dropzone.classList.remove('dragover');
 }
 
+function isSupportedImage(file) {
+  const supportedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (supportedTypes.includes(file.type)) return true;
+  // Some browsers give an empty type for certain extensions — check by extension
+  return /\.(jpe?g|png|webp)$/i.test(file.name);
+}
+
 async function handleDrop(e) {
   e.preventDefault();
   dropzone.classList.remove('dragover');
-  const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith('image/'));
-  await handleFiles(files);
+  await handleFiles(Array.from(e.dataTransfer.files));
 }
 
 async function handleFileSelect(e) {
-  const files = Array.from(e.target.files).filter((f) => f.type.startsWith('image/'));
-  await handleFiles(files);
+  await handleFiles(Array.from(e.target.files));
   fileInput.value = '';
 }
 
 async function handleFiles(files) {
   if (files.length === 0) return;
 
+  const supported = [];
   for (const file of files) {
+    if (isSupportedImage(file)) {
+      supported.push(file);
+    } else {
+      // HEIC and other formats cannot be decoded in Chromium/Firefox — tell the user clearly
+      console.warn('Unsupported file format:', file.name, file.type);
+      announce(`${t('error.invalidFormat')}: ${file.name}`);
+    }
+  }
+
+  for (const file of supported) {
     try {
       const imageData = await loadImage(file);
       uploadedFiles.push(imageData);
@@ -141,7 +152,17 @@ async function loadImage(file) {
     rawSize: file.size,
     originalType: file.type,
     _bitmap: bitmap,
+    _objectUrl: objectUrl,
   };
+}
+
+function releaseImageData(imageData) {
+  if (imageData._bitmap && typeof imageData._bitmap.close === 'function') {
+    imageData._bitmap.close();
+  }
+  if (imageData._objectUrl) {
+    URL.revokeObjectURL(imageData._objectUrl);
+  }
 }
 
 function loadFallbackBitmap(file) {
@@ -184,7 +205,7 @@ function renderImages() {
 }
 
 function createImageCard(imageData, index) {
-  const card = document.createElement('div');
+  const card = document.createElement('li');
   card.className = 'page-card';
   card.setAttribute('role', 'listitem');
   card.setAttribute('aria-label', `Image ${index + 1}`);
@@ -319,8 +340,8 @@ function cleanImage(imageData, format, quality) {
   return new Promise((resolve, reject) => {
     // Use the orientation-corrected bitmap directly if available
     const bitmap = imageData._bitmap;
-    
-    if (bitmap && bitmap.close) {
+
+    if (bitmap?.close) {
       // ImageBitmap path (preferred — EXIF orientation already applied)
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -372,8 +393,6 @@ function cleanImage(imageData, format, quality) {
 }
 
 function encodeCanvas(canvas, format, quality, imageData, resolve, reject) {
-  const ctx = canvas.getContext('2d');
-  
   // Determine output MIME type
   const supportedTypes = ['image/jpeg', 'image/png', 'image/webp'];
   let mimeType = imageData.originalType;
@@ -475,6 +494,9 @@ function announce(message) {
 }
 
 function resetAll() {
+  for (const imageData of uploadedFiles) {
+    releaseImageData(imageData);
+  }
   uploadedFiles = [];
   imagesGrid.innerHTML = '';
   workspace.hidden = true;
