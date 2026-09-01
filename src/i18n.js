@@ -6,20 +6,20 @@
 export const STORAGE_KEY = 'exif-stripper-lang';
 
 export const LANGUAGES = {
-  en: { code: 'en', name: 'English' },
-  fr: { code: 'fr', name: 'Français' },
-  de: { code: 'de', name: 'Deutsch' },
-  es: { code: 'es', name: 'Español' },
-  pt: { code: 'pt', name: 'Português' },
-  nl: { code: 'nl', name: 'Nederlands' },
-  it: { code: 'it', name: 'Italiano' },
+  en: { code: 'en', name: 'English', flag: '🇬🇧' },
+  fr: { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  de: { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  es: { code: 'es', name: 'Español', flag: '🇪🇸' },
+  pt: { code: 'pt', name: 'Português', flag: '🇵🇹' },
+  nl: { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
+  it: { code: 'it', name: 'Italiano', flag: '🇮🇹' },
 };
 
 export const TRANSLATIONS = {
   en: {
     'app.title': 'EXIF Stripper',
     'app.tagline': 'Remove EXIF metadata from photos — 100% in your browser',
-    'privacy.badge': 'Client-side only',
+    'privacy.badge': '🔒 Your photos never leave your browser',
     'privacy.tooltip': 'No data leaves your device',
 
     'dropzone.title': 'Drop photos here',
@@ -68,15 +68,15 @@ export const TRANSLATIONS = {
     'error.failedLoad': 'Failed to load image',
     'error.failedClean': 'Failed to clean image: {msg}',
 
-    'footer.privacy': 'Your photos never leave your browser',
-    'footer.openSource': 'Open Source',
+    'privacy.link': 'View on GitHub',
     'footer.github': 'View on GitHub',
+    'footer.bmc': 'Buy me a coffee',
   },
 
   fr: {
     'app.title': 'EXIF Stripper',
     'app.tagline': 'Supprime les métadonnées EXIF — 100% dans votre navigateur',
-    'privacy.badge': 'Client-side uniquement',
+    'privacy.badge': '🔒 Vos photos ne quittent jamais votre navigateur',
     'privacy.tooltip': 'Aucune donnée ne quitte votre appareil',
 
     'dropzone.title': 'Déposez vos photos ici',
@@ -125,15 +125,15 @@ export const TRANSLATIONS = {
     'error.failedLoad': "Impossible de charger l'image",
     'error.failedClean': 'Échec du nettoyage : {msg}',
 
-    'footer.privacy': 'Vos photos ne quittent jamais votre navigateur',
-    'footer.openSource': 'Open Source',
+    'privacy.link': 'Voir sur GitHub',
     'footer.github': 'Voir sur GitHub',
+    'footer.bmc': 'Offrir un café',
   },
 
   de: {
     'app.title': 'EXIF Stripper',
     'app.tagline': 'EXIF-Metadaten entfernen — 100% im Browser',
-    'privacy.badge': 'Nur Client-Seite',
+    'privacy.badge': '🔒 Ihre Fotos verlassen nie Ihren Browser',
     'privacy.tooltip': 'Keine Daten verlassen Ihr Gerät',
 
     'dropzone.title': 'Bilder hier ablegen',
@@ -182,15 +182,15 @@ export const TRANSLATIONS = {
     'error.failedLoad': 'Bild konnte nicht geladen werden',
     'error.failedClean': 'Bereinigung fehlgeschlagen: {msg}',
 
-    'footer.privacy': 'Ihre Fotos verlassen nie Ihren Browser',
-    'footer.openSource': 'Open Source',
+    'privacy.link': 'Auf GitHub ansehen',
     'footer.github': 'Auf GitHub ansehen',
+    'footer.bmc': 'Kaffee ausgeben',
   },
 
   es: {
     'app.title': 'EXIF Stripper',
     'app.tagline': 'Eliminar metadatos EXIF — 100% en el navegador',
-    'privacy.badge': 'Solo cliente',
+    'privacy.badge': '🔒 Tus fotos nunca salen de tu navegador',
     'privacy.tooltip': 'Ningún dato sale de tu dispositivo',
 
     'dropzone.title': 'Arrastra fotos aquí',
@@ -239,15 +239,15 @@ export const TRANSLATIONS = {
     'error.failedLoad': 'Error al cargar la imagen',
     'error.failedClean': 'Error al limpiar: {msg}',
 
-    'footer.privacy': 'Tus fotos nunca salen de tu navegador',
-    'footer.openSource': 'Código abierto',
+    'privacy.link': 'Ver en GitHub',
     'footer.github': 'Ver en GitHub',
+    'footer.bmc': 'Invítame un café',
   },
 
   pt: {
     'app.title': 'EXIF Stripper',
     'app.tagline': 'Remover metadados EXIF — 100% no navegador',
-    'privacy.badge': 'Apenas cliente',
+    'privacy.badge': '🔒 Suas fotos nunca saem do navegador',
     'privacy.tooltip': 'Nenhum dado sai do seu dispositivo',
 
     'dropzone.title': 'Solte fotos aqui',
@@ -296,15 +296,15 @@ export const TRANSLATIONS = {
     'error.failedLoad': 'Erro ao carregar imagem',
     'error.failedClean': 'Erro ao limpar: {msg}',
 
-    'footer.privacy': 'Suas fotos nunca saem do navegador',
-    'footer.openSource': 'Código aberto',
+    'privacy.link': 'Ver no GitHub',
     'footer.github': 'Ver no GitHub',
+    'footer.bmc': 'Pague um café',
   },
 
   nl: {
     'app.title': 'EXIF Stripper',
     'app.tagline': 'EXIF metadata verwijderen — 100% in je browser',
-    'privacy.badge': 'Alleen cliëntkant',
+    'privacy.badge': "🔒 Jouw foto's verlaten nooit je browser",
     'privacy.tooltip': 'Geen gegevens verlaten je apparaat',
 
     'dropzone.title': "Sleep foto's hierheen",
@@ -353,15 +353,15 @@ export const TRANSLATIONS = {
     'error.failedLoad': 'Kan afbeelding niet laden',
     'error.failedClean': 'Reiniging mislukt: {msg}',
 
-    'footer.privacy': "Jouw foto's verlaten nooit je browser",
-    'footer.openSource': 'Open bron',
+    'privacy.link': 'Bekijk op GitHub',
     'footer.github': 'Bekijk op GitHub',
+    'footer.bmc': 'Koffie aanbieden',
   },
 
   it: {
     'app.title': 'EXIF Stripper',
     'app.tagline': 'Rimuovi metadati EXIF — 100% nel browser',
-    'privacy.badge': 'Solo lato client',
+    'privacy.badge': '🔒 Le tue foto non lasciano mai il browser',
     'privacy.tooltip': 'Nessun dato lascia il tuo dispositivo',
 
     'dropzone.title': 'Trascina le foto qui',
@@ -410,9 +410,9 @@ export const TRANSLATIONS = {
     'error.failedLoad': 'Caricamento immagine fallito',
     'error.failedClean': 'Pulizia fallita: {msg}',
 
-    'footer.privacy': 'Le tue foto non lasciano mai il browser',
-    'footer.openSource': 'Open Source',
+    'privacy.link': 'Visualizza su GitHub',
     'footer.github': 'Visualizza su GitHub',
+    'footer.bmc': 'Offri un caffè',
   },
 };
 
@@ -502,25 +502,38 @@ export async function initI18n() {
 }
 
 function setupLangSelector(container) {
-  // Create dropdown
-  const select = document.createElement('select');
-  select.className = 'lang-selector';
-  select.setAttribute('aria-label', 'Select language');
+  container.innerHTML = '';
+  container.className = 'lang-selector';
+  container.setAttribute('role', 'group');
+  container.setAttribute('aria-label', 'Select language');
 
   for (const [code, lang] of Object.entries(LANGUAGES)) {
-    const option = document.createElement('option');
-    option.value = code;
-    option.textContent = lang.name;
-    option.selected = code === currentLang;
-    select.appendChild(option);
-  }
-
-  select.addEventListener('change', () => {
-    if (setCurrentLang(select.value)) {
-      // Reload page to re-translate everything
-      window.location.reload();
+    const btn = document.createElement('button');
+    btn.className = 'lang-btn';
+    btn.type = 'button';
+    btn.textContent = lang.flag;
+    btn.title = lang.name;
+    btn.setAttribute('aria-label', lang.name);
+    btn.dataset.lang = code;
+    if (code === currentLang) {
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+    } else {
+      btn.setAttribute('aria-pressed', 'false');
     }
-  });
 
-  container.appendChild(select);
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('.lang-btn').forEach((b) => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+      if (setCurrentLang(code)) {
+        window.location.reload();
+      }
+    });
+
+    container.appendChild(btn);
+  }
 }

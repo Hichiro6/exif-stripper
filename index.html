@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Remove EXIF metadata from photos — 100% in your browser, nothing uploaded" />
+  <meta name="theme-color" content="#08090a" />
   <title>EXIF Stripper — Remove Photo Metadata</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <link rel="manifest" href="./manifest.json" />
@@ -12,27 +13,19 @@
 <body>
   <!-- Header -->
   <header class="header">
-    <div class="header__inner">
-      <div class="header__brand">
-        <div class="header__logo">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EXIF Stripper logo">
-            <title>EXIF Stripper logo</title>
-            <rect x="3" y="6" width="22" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
-            <circle cx="14" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
-            <path d="M10 6l2-3h4l2 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M22 4l3 3M25 4l-3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div>
-          <h1 class="header__title">EXIF Stripper</h1>
-          <p class="header__tagline" data-i18n="app.tagline">Remove EXIF metadata from photos — 100% in your browser</p>
-        </div>
-      </div>
-      <div class="header__actions">
-        <span class="badge badge--privacy" data-i18n="privacy.badge" data-i18n-attr="title: privacy.tooltip">Client-side only</span>
-        <div id="lang-selector"></div>
-      </div>
+    <div class="header__logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="32" height="32" rx="8" fill="#5e6ad2"/>
+        <rect x="7" y="9" width="18" height="14" rx="3" stroke="white" stroke-width="2"/>
+        <circle cx="16" cy="16" r="3.5" stroke="white" stroke-width="2"/>
+        <path d="M11 9l1.5-2.5h7L21 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M22 7l2.5 2.5M24.5 7L22 9.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <h1>EXIF Stripper</h1>
     </div>
+    <p class="header__tagline" data-i18n="app.tagline">Remove EXIF metadata from photos — 100% in your browser</p>
+    <!-- Language selector créé dynamiquement par i18n.js -->
+    <div id="lang-selector"></div>
   </header>
 
   <!-- Main Content -->
@@ -134,9 +127,13 @@
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="footer__inner">
-      <span class="footer__privacy" data-i18n="footer.privacy">Your photos never leave your browser</span>
-      <a href="https://github.com/Hichiro6/exif-stripper" class="footer__link" data-i18n="footer.openSource">Open Source</a>
+    <div class="footer__privacy">
+      <span class="badge" data-i18n="privacy.badge">🔒 Your photos never leave your browser</span>
+    </div>
+    <div class="footer__links">
+      <a href="https://github.com/Hichiro6/exif-stripper" target="_blank" rel="noopener noreferrer" data-i18n="privacy.link">View on GitHub</a>
+      <span class="footer__separator">·</span>
+      <a href="https://buymeacoffee.com/hichiro" target="_blank" rel="noopener noreferrer" class="footer__bmc">☕ <span data-i18n="footer.bmc">Buy me a coffee</span></a>
     </div>
   </footer>
 
